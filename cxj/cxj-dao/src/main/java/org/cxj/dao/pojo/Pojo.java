@@ -1,7 +1,12 @@
 package org.cxj.dao.pojo;
 
 import java.math.BigDecimal;
-
+/**
+ * 
+ * @author xjj
+ * 封装实体类
+ *
+ */
 public class Pojo {
       private BigDecimal max;
       private BigDecimal min;
