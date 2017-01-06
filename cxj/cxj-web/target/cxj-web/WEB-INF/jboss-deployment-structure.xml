@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss-deployment-structure>
+    <deployment>
+       <!-- 因为jboss已经集成了log4j 的功能，我们可以
+		       直接使用JBoss的log4j，但是我们有自己的日志输出规则，
+		       而jBoss的规则最好不要修改，所以还是使用自己的log4j比较好 ,因此加上如下配置-->
+       <exclusions>
+            <module name="org.slf4j" />
+            <module name="org.slf4j.impl" />
+            <module name="org.slf4j.jcl-over-slf4j" />
+        </exclusions>
+    </deployment>
+</jboss-deployment-structure>

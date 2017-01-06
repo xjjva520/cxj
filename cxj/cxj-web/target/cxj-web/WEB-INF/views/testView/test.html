@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<script type="text/javascript" th:src="@{/script/common/ajax.js}"></script>
+<script th:inline="javascript">
+var contextPath = [[${#httpServletRequest.getContextPath()}]];
+</script>
+<script type="text/javascript" th:src="@{/script/common/jquery-1.10.2.min.js}"></script>
+<head>
+<title>welcome to test</title>
+</head>
+<body>
+  <div>
+    <form id="doform" method="post" action="">
+     <div>第一题：联动功能</div>
+     <div>
+      <select id="querySelect1" onchange="rechange();">
+       <option th:each="vo:${tt}" th:value="${vo.key}" th:text="${vo.value}">
+       </option>
+      </select>
+     </div>
+     <div>联动功能</div>
+     <div>
+      <select id="querySelect2">
+       </select>
+     </div>
+    </form>
+  </div>
+  
+  
+  <div>
+     <div><span>第二题：排序，请输入数字K</span></div>  
+     <div><input type="text" name="num"/></div>
+     <div><span>第二题：排序，请输入要一组需要排序的数字（请已逗号隔开）</span></div>  
+     <div><input type="text" name="array"/></div>
+  </div>
+  <div>
+     <span>返回的结果</span>
+     <div><span id="result"></span></div>
+  </div>
+  <div>
+     <span style="color:blue" onclick="sortFunc();">提交按钮</span>
+  </div>
+  
+  <div>
+     <div><span>第三题：需要被替换的字符串</span></div>  
+     <div><input type="text" name="str"/></div>
+     <div><span>第三题：请输入替换的字符</span></div>  
+     <div><input type="text" name="repalce" onblur="replace();"/></div>
+  </div>
+  <div>
+     <span>字符串返回的结果</span>
+     <div><span id="rePlaceResult"></span></div>
+  </div>
+   <div>
+     <span onclick="print();">打印</span>
+  </div>
+  
+<script th:inline="javascript">
+function replace(){
+	var str = $("input[name='str']").val();
+	var repalce = $("input[name='repalce']").val();
+	var data = {};
+	data["str"] = str;
+	data["replce"]=repalce;
+	var url = contextPath+"/replace.json";
+	asyncAjaxRequest("POST",url,data,"json",function(res){
+    	if(res.sucess=="true"){
+    	 $("#rePlaceResult").html(res.result);
+    	}
+    },function(){
+    	alert("系统异常");
+     });
+}
+
+
+
+
+function print(){
+	window.location.href =contextPath+"/print";;
+}
+
+function sortFunc(){
+	if(validate()){
+	var num = $("input[name='num']").val();
+	var array = $("input[name='array']").val();
+	var data = {};
+	data["num"] = num;
+	data["array"]=array;
+	    //alert(JSON.stringify(data));
+	    var url = contextPath+"/sort.json";
+	    asyncAjaxRequest("POST",url,data,"json",function(res){
+	    	if(res.sucess=="true"){
+	    	 var list = res.result;
+	    	 var aa="";
+	    	for(var i in list){
+	    		aa= aa+","+list[i];
+	    	 }
+	    	  $("#result").html(aa); 
+	    	}else{
+	    	  $("#result").html(res.errMsg);
+	    	}
+	    },function(){
+	    	alert("系统异常");
+	     });
+	}
+}
+
+
+function rechange(){
+	var select1V = $("#querySelect1 option:selected").val();
+    var data = {};
+    data["proID"] = select1V;
+    var url = contextPath+"/one.json";
+	asyncAjaxRequest("POST",url,data,"json",successFun,errorFun);
+}
+
+function successFun(response){
+	if(response!=null){
+		$("#querySelect2").empty();
+		for (var key in response){
+			var element = '<option value="'+key+'">'+response[key]+'</option>';
+			$("#querySelect2").append(element);
+		}
+	}
+}
+
+function errorFun(xmr,status,throwns){
+	
+}
+
+function validate(){
+	
+	var num = $("input[name='num']").val();
+	var array = $("input[name='array']").val();
+	var patt = /^[0-9]*$/
+	var reg = /^[0-9,]+$/;
+	if(num==""){
+	  $("#result").html("k不能为空");
+	   return false;
+	}
+	if(!patt.test(num)){
+		$("#result").html("k只能输入数字");
+		return false;
+	}
+	
+	  if(array==""){
+		  $("#result").html("array不能为空");
+		   return false;
+		}
+	 if(!reg.test(array)){
+			$("#result").html("k只能输入数字和逗号");
+			return false;
+	 }
+	 return true;
+}
+</script>  
+</body>
+</html>

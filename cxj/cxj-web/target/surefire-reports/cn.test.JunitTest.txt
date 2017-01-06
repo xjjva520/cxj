@@ -1,0 +1,8 @@
+-------------------------------------------------------------------------------
+Test set: cn.test.JunitTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0 sec <<< FAILURE! - in cn.test.JunitTest
+test(cn.test.JunitTest)  Time elapsed: 0 sec  <<< ERROR!
+java.lang.NullPointerException
+	at cn.test.JunitTest.test(JunitTest.java:16)
+

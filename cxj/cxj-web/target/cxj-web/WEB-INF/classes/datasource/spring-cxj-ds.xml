@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+     http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.0.xsd
+     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd" >
+    
+     <!--加载配置文件读取数据源的配置文件  -->
+     <context:property-placeholder location="classpath:database.properties"/>
+     
+     <bean id="cxjDataBase" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close" lazy-init="true">
+	 <property name="driverClassName" value="${cxj.driver}"></property>
+     <property name="url" value="${cxj.dataSource.url}"></property>
+     <property name="username" value="${cxj.dataSource.username}"></property>
+     <property name="password" value="${cxj.dataSource.password}"></property>
+     </bean>
+     
+     
+    <!-- 配置该数据源扫描mapper.xml -->
+	 <bean id="cxjSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean" lazy-init="true">
+		<property name="dataSource" ref="cxjDataBase" />
+		<!-- 自动扫描entity目录, 省掉Configuration.xml里的手工配置 -->
+		<!-- <property name="configLocation" value="classpath:mapper_config.xml"></property> -->
+		 <property name="mapperLocations" value="classpath:org/cxj/dao/mapper/*.xml" /> 
+	</bean> 
+	
+	<!-- 配置扫描mapper -->
+	  <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" lazy-init="true">
+		<property name="sqlSessionFactoryBeanName" value="cxjSqlSessionFactory" />
+		<property name="basePackage" value="org.cxj.dao.mapper" />
+	</bean> 
+	 
+	<!--事物控制-->
+	 <bean id="cxjTransactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager" lazy-init="true">
+		<property name="dataSource" ref="cxjDataBase" />
+		<qualifier value="primeton" />
+	</bean> 
+	
+ <!-- 事物的注解驱动 -->
+ <!-- <tx:annotation-driven transaction-manager="transactionManager"/> -->
+</beans>

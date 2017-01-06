@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+	<!--logfile location-->
+	<substitutionProperty name="LOG_BASE" value="F:/logs" />
+	<substitutionProperty name="PROJECT_NAME" value="cxj-web" />
+	<substitutionProperty name="LOG_HOME" value="${LOG_BASE}/${PROJECT_NAME}" />
+	
+	<appender name="XUJIANJIAN" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern> 
+       			 %d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} %L - %msg%n
+     	 	</pattern> 
+     	 	<immediateFlush>true</immediateFlush>
+   	 	</encoder> 
+    </appender>  
+   
+    <!-- 指定操作日志，做了什么操作。 -->
+   	 <appender name="permissionRolling" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">  <!-- 这个是临界值过滤器，超过设置级别的日志全部打印出来 -->
+            <level>DEBUG</level>   
+        </filter>  
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_HOME}/operation-cxj.%d{yyyy-MM-dd}.%i</fileNamePattern>
+			<MaxHistory>30</MaxHistory>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+        		<maxFileSize>50mb</maxFileSize>
+      		</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} thread=[%thread] %msg%n</pattern>
+			<charset class="java.nio.charset.Charset">UTF-8</charset>
+			<immediateFlush>true</immediateFlush>
+		</encoder>
+	</appender>
+   
+   <logger name="operation.log" level="DEBUG"   additivity="false">
+    <appender-ref ref="permissionRolling"/>
+    <appender-ref ref="XUJIANJIAN"/>
+   </logger>
+   
+   <logger name="cn.cxj.controller.testController" level="INFO" additivity="false">  
+    <appender-ref ref="XUJIANJIAN"/>  
+  </logger>   
+   
+   <root level="DEBUG">							
+		<appender-ref ref="XUJIANJIAN" />				
+	</root> 
+</configuration>
+
